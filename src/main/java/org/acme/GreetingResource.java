@@ -8,6 +8,9 @@ import jakarta.ws.rs.core.MediaType;
 import org.acme.models.Greeting;
 import org.jboss.resteasy.reactive.RestQuery;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Path("/hello")
 public class GreetingResource {
 
@@ -20,5 +23,17 @@ public class GreetingResource {
         greeting.persist();
 
         return "Hello " + name;
+    }
+
+    @GET
+    @Path("names")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String names() {
+        List<Greeting> greetings = Greeting.listAll();
+        String names = greetings.stream()
+                .map(greeting -> greeting.name)
+                .collect(Collectors.joining(", "));
+
+        return "I've said hello to " + names;
     }
 }
